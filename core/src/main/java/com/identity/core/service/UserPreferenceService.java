@@ -1,8 +1,8 @@
 package com.identity.core.service;
 
-import com.identity.core.config.IdentityProperties;
 import com.identity.core.domain.UserAppPreference;
 import com.identity.core.exception.ResourceNotFoundException;
+import com.identity.core.repository.AppRepository;
 import com.identity.core.repository.UserAppPreferenceRepository;
 import com.identity.core.repository.UserRepository;
 import java.util.ArrayList;
@@ -16,17 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserPreferenceService {
 
     private final UserRepository userRepository;
+    private final AppRepository appRepository;
     private final UserAppPreferenceRepository preferenceRepository;
-    private final List<String> knownApps;
 
     public UserPreferenceService(
             UserRepository userRepository,
-            UserAppPreferenceRepository preferenceRepository,
-            IdentityProperties properties
+            AppRepository appRepository,
+            UserAppPreferenceRepository preferenceRepository
     ) {
         this.userRepository = userRepository;
+        this.appRepository = appRepository;
         this.preferenceRepository = preferenceRepository;
-        this.knownApps = List.copyOf(properties.apps().known());
     }
 
     @Transactional(readOnly = true)
@@ -41,7 +41,7 @@ public class UserPreferenceService {
 
         for (Map.Entry<String, Boolean> entry : updates.entrySet()) {
             String appId = entry.getKey();
-            if (!knownApps.contains(appId)) {
+            if (!appRepository.existsById(appId)) {
                 throw new ResourceNotFoundException("Unknown app: " + appId);
             }
 
@@ -57,7 +57,8 @@ public class UserPreferenceService {
 
     @Transactional
     public void createDefaultPreferences(Long userId) {
-        List<UserAppPreference> defaults = knownApps.stream()
+        List<UserAppPreference> defaults = appRepository.findAllByOrderByAppIdAsc().stream()
+            .map(app -> app.getAppId())
                 .map(appId -> new UserAppPreference(userId, appId, true))
                 .toList();
         preferenceRepository.saveAll(defaults);
@@ -71,7 +72,7 @@ public class UserPreferenceService {
         }
 
         List<UserAppPreference> normalized = new ArrayList<>();
-        for (String appId : knownApps) {
+        for (String appId : appRepository.findAllByOrderByAppIdAsc().stream().map(app -> app.getAppId()).toList()) {
             normalized.add(byAppId.getOrDefault(appId, new UserAppPreference(userId, appId, true)));
         }
         return normalized;

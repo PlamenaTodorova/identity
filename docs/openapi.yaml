@@ -8,6 +8,7 @@ servers:
     description: Local development
 tags:
   - name: Authentication
+  - name: Apps
   - name: Users
   - name: Health
 paths:
@@ -116,6 +117,23 @@ paths:
         '401':
           $ref: '#/components/responses/AuthenticationFailed'
 
+  /apps:
+    get:
+      tags: [Apps]
+      summary: Fetch all available apps
+      operationId: getApps
+      responses:
+        '200':
+          description: Available apps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppResponse'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailed'
+
   /users/me/preferences:
     get:
       tags: [Users]
@@ -151,6 +169,12 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '401':
           $ref: '#/components/responses/AuthenticationFailed'
+        '404':
+          description: App was not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
 
   /actuator/health:
     get:
@@ -195,6 +219,17 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetail'
   schemas:
+    AppResponse:
+      type: object
+      required: [appId, name, baseUrl]
+      properties:
+        appId:
+          type: string
+        name:
+          type: string
+        baseUrl:
+          type: string
+          format: uri
     RegisterRequest:
       type: object
       required: [email, password, displayName]

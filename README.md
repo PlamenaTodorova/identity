@@ -79,6 +79,7 @@ Send `Authorization: Bearer <accessToken>`.
 | `GET` | `/users/me` | Current user profile |
 | `GET` | `/users/me/preferences` | Enabled/disabled Adjutant apps |
 | `PUT` | `/users/me/preferences` | Update app preferences |
+| `GET` | `/apps` | Fetch all available apps |
 
 ### Example: register
 
