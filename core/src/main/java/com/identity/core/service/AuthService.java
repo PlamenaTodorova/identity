@@ -20,20 +20,17 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserPreferenceService userPreferenceService;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(
             UserRepository userRepository,
             RefreshTokenRepository refreshTokenRepository,
-            UserPreferenceService userPreferenceService,
             TokenService tokenService,
             PasswordEncoder passwordEncoder
     ) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
-        this.userPreferenceService = userPreferenceService;
         this.tokenService = tokenService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -51,7 +48,6 @@ public class AuthService {
                 command.displayName().trim()
         );
         user = userRepository.save(user);
-        userPreferenceService.createDefaultPreferences(user.getId());
 
         return issueTokens(user);
     }

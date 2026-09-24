@@ -21,7 +21,7 @@ CREATE TABLE `user_app_preferences` (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
   `user_id` BIGINT NOT NULL,
   `app_id` VARCHAR(64) NOT NULL,
-  `enabled` BOOLEAN NOT NULL DEFAULT TRUE,
+  `enabled` BOOLEAN NOT NULL DEFAULT FALSE,
   UNIQUE KEY `uk_user_app_preferences_user_app` (`user_id`, `app_id`),
   CONSTRAINT `fk_user_app_preferences_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

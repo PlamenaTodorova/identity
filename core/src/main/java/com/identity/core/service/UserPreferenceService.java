@@ -45,23 +45,19 @@ public class UserPreferenceService {
                 throw new ResourceNotFoundException("Unknown app: " + appId);
             }
 
-            UserAppPreference preference = preferenceRepository
+                if (Boolean.TRUE.equals(entry.getValue())) {
+                UserAppPreference preference = preferenceRepository
                     .findByUserIdAndAppId(userId, appId)
                     .orElseGet(() -> new UserAppPreference(userId, appId, true));
-            preference.setEnabled(entry.getValue());
-            preferenceRepository.save(preference);
+                preference.setEnabled(true);
+                preferenceRepository.save(preference);
+                } else {
+                preferenceRepository.findByUserIdAndAppId(userId, appId)
+                    .ifPresent(preferenceRepository::delete);
+                }
         }
 
         return normalizePreferences(userId);
-    }
-
-    @Transactional
-    public void createDefaultPreferences(Long userId) {
-        List<UserAppPreference> defaults = appRepository.findAllByOrderByAppIdAsc().stream()
-            .map(app -> app.getAppId())
-                .map(appId -> new UserAppPreference(userId, appId, true))
-                .toList();
-        preferenceRepository.saveAll(defaults);
     }
 
     private List<UserAppPreference> normalizePreferences(Long userId) {
@@ -73,7 +69,7 @@ public class UserPreferenceService {
 
         List<UserAppPreference> normalized = new ArrayList<>();
         for (String appId : appRepository.findAllByOrderByAppIdAsc().stream().map(app -> app.getAppId()).toList()) {
-            normalized.add(byAppId.getOrDefault(appId, new UserAppPreference(userId, appId, true)));
+            normalized.add(byAppId.getOrDefault(appId, new UserAppPreference(userId, appId, false)));
         }
         return normalized;
     }

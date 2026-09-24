@@ -31,9 +31,6 @@ class AuthServiceTest {
     @Mock
     private RefreshTokenRepository refreshTokenRepository;
 
-    @Mock
-    private UserPreferenceService userPreferenceService;
-
     private AuthService authService;
 
     @BeforeEach
@@ -50,7 +47,6 @@ class AuthServiceTest {
         authService = new AuthService(
                 userRepository,
                 refreshTokenRepository,
-                userPreferenceService,
                 new TokenService(properties),
                 new BCryptPasswordEncoder()
         );
@@ -78,7 +74,6 @@ class AuthServiceTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
         assertThat(userCaptor.getValue().getEmail()).isEqualTo("alice@example.com");
-        verify(userPreferenceService).createDefaultPreferences(42L);
         verify(refreshTokenRepository).save(any());
     }
 
