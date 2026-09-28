@@ -25,9 +25,21 @@ public class App {
     @Column(name = "base_url", nullable = false, length = 512)
     private String baseUrl;
 
+    @Column(length = 512)
+    private String icon;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     public App(String appId, String name, String baseUrl) {
         this.appId = appId;
         this.name = name;
         this.baseUrl = baseUrl;
+    }
+
+    public App(String appId, String name, String baseUrl, String icon, String description) {
+        this(appId, name, baseUrl);
+        this.icon = icon;
+        this.description = description;
     }
 }

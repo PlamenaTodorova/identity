@@ -5,7 +5,9 @@ USE `identity`;
 CREATE TABLE `apps` (
   `app_id` VARCHAR(64) PRIMARY KEY,
   `name` VARCHAR(120) NOT NULL,
-  `base_url` VARCHAR(512) NOT NULL
+  `base_url` VARCHAR(512) NOT NULL,
+  `icon` VARCHAR(512),
+  `description` TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `users` (

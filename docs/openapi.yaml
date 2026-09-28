@@ -230,6 +230,13 @@ components:
         baseUrl:
           type: string
           format: uri
+        icon:
+          type: string
+          nullable: true
+          description: Icon URL or asset reference for the app.
+        description:
+          type: string
+          nullable: true
     RegisterRequest:
       type: object
       required: [email, password, displayName]
